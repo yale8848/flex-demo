@@ -33,7 +33,7 @@ module.exports = function(grunt) {
     const DIR = __dirname; // path.resolve(__dirname, "..");
     var config = {
         tmp: '.tmp',
-        src: DIR + '/src',
+        src: DIR + '.',
         dist: DIR + '/public'
     };
 
@@ -48,7 +48,7 @@ module.exports = function(grunt) {
         less: {
             dist: {
                 options: {
-                    paths: ['<%= config.src %>/css'],
+                    paths: ['./css'],
                     plugins: [
                         new(require('less-plugin-autoprefix'))({ browsers: ["> 1%", "last 5 versions"] })
                     ],
@@ -57,8 +57,8 @@ module.exports = function(grunt) {
                     expand: true,
                     dot: true,
                     ext: '.css',
-                    cwd: '<%= config.src %>/less',
-                    dest: '<%= config.dist %>/css',
+                    cwd: './less',
+                    dest: './css',
                     src: [
                         '*.less'
                     ]
@@ -67,10 +67,17 @@ module.exports = function(grunt) {
         },
 
         watch: {
+            css: {
+                // We watch and compile less files as normal but don't live reload here
+                files: ['./less/**/*.less'],
+                tasks: ['less'],
+            },
 
             options: {
                 livereload: lrPort
             },
+
+
             // '**' 表示包含所有的子目录
             // '*' 表示包含所有的文件
             files: ['index.html', './css/*', './js/*', './img/**/*']
@@ -97,6 +104,7 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('static', [
+        'less',
         'connect',
         'watch'
     ]);
